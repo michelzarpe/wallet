@@ -29,7 +29,7 @@ public class UserRepositoryTest {
 	@Before
 	public void setUp() {
 		Users u = new Users(null, "Michel", "123456", EMAIL);
-		Users response = repository.save(u);
+		repository.save(u);
 	}
 	
 	@Test
