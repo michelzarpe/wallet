@@ -1,5 +1,6 @@
 package com.wallet.controller;
 
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import org.junit.Test;
@@ -28,6 +29,7 @@ import com.wallet.entity.Users;
 @ActiveProfiles("test")
 public class UserControllerTest {
 	
+	public static final Long ID = 1L;
 	public static final String PASSWORD = "123456";
 	public static final String NAME = "Michel Zarpelon";
 	public static final String EMAIL = "michel@michel.com";
@@ -45,19 +47,34 @@ public class UserControllerTest {
 		BDDMockito.given(usersService.save(Mockito.any(Users.class))).willReturn(getMockUser());
 		
 		mvc.perform(MockMvcRequestBuilders.post(URL)
-				.content(getJsonPayLoad())
+				.content(getJsonPayLoad(ID, PASSWORD, NAME, EMAIL))
 						.contentType(MediaType.APPLICATION_JSON)
 						.accept(MediaType.APPLICATION_JSON))
-		.andExpect(status().isCreated());
+		.andExpect(status().isCreated())
+		.andExpect(jsonPath("$.data.id").value(ID))
+		.andExpect(jsonPath("$.data.email").value(EMAIL))
+		.andExpect(jsonPath("$.data.name").value(NAME))
+		.andExpect(jsonPath("$.data.password").value(PASSWORD));
+	}
+	
+	
+	@Test
+	public void testSaveInvalidUsers() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.post(URL)
+				.content(getJsonPayLoad(ID, PASSWORD, NAME, "email"))
+						.contentType(MediaType.APPLICATION_JSON)
+						.accept(MediaType.APPLICATION_JSON))
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.errors[0]").value("Email inválido"));
 	}
 	
 	public Users getMockUser() {
-		Users u = new Users(null, PASSWORD, NAME, EMAIL);
+		Users u = new Users(ID, PASSWORD, NAME, EMAIL);
 		return u;
 	}
 	
-	public String getJsonPayLoad() throws JsonProcessingException {
-		UsersDTO dto = new UsersDTO(null, PASSWORD, NAME, EMAIL);
+	public String getJsonPayLoad(Long id, String password, String name, String email) throws JsonProcessingException {
+		UsersDTO dto = new UsersDTO(id, password, name, email);
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(dto);
 	}

@@ -25,16 +25,21 @@ public class UsersController {
 	@PostMapping
 	public ResponseEntity<Response<UsersDTO>> create(@Valid @RequestBody UsersDTO usersDto, BindingResult result){
 		Response<UsersDTO> response = new Response<UsersDTO>();
+		if(result.hasErrors()) {
+			result.getAllErrors().forEach(e -> response.getErrors().add(e.getDefaultMessage()));
+			return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
+		}
+		
 		Users user = service.save(this.convertDTOToEntity(usersDto));
 		response.setData(this.convertEntityToDTO(user));
 		return ResponseEntity.status(HttpStatus.CREATED).body(response);
 	}
 	
 	private Users convertDTOToEntity(UsersDTO userDTO) {
-		return new Users(null, userDTO.getPassword(), userDTO.getName(), userDTO.getEmail());
+		return new Users(userDTO.getId(), userDTO.getPassword(), userDTO.getName(), userDTO.getEmail());
 	}
 	
 	private UsersDTO convertEntityToDTO(Users user) {
-		return new UsersDTO(null, user.getPassword(), user.getName(), user.getEmail());
+		return new UsersDTO(user.getId(), user.getPassword(), user.getName(), user.getEmail());
 	}
 }

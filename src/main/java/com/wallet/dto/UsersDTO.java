@@ -1,5 +1,6 @@
 package com.wallet.dto;
 
+
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
@@ -18,6 +19,6 @@ public class UsersDTO {
 	private String password;
 	@Length(min = 3, max=50, message = "3 até 50 caracteres")
 	private String name;
-	@Email(message = "Email invalido")
+	@Email(message = "Email inválido")
 	private String email;
 }
