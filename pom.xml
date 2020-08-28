@@ -70,6 +70,19 @@
 			<scope>runtime</scope>
 		</dependency>
 		
+		<!-- flywaydb  	
+		<dependency>
+			<groupId>org.flywaydb</groupId>
+			<artifactId>flyway-core</artifactId>
+		</dependency>
+		-->
+		
+		<!-- security  -->	
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-security</artifactId>
+		</dependency>
+		
 	</dependencies>
 
 	<build>
