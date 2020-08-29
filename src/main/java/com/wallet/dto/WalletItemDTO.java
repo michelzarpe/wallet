@@ -6,6 +6,7 @@ import java.util.Date;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -24,6 +25,7 @@ public class WalletItemDTO {
 	
 	@NotEmpty(message = "Tipo não pode ser vazio")
 	@Length(max = 2, message = "Máximo dois caracteres")
+	@Pattern(regexp="^(ENTRADA|SAIDA)$", message="Para o tipo somente são aceitos ENTRADA e SAIDA")
 	private String type;
 	
 	@NotNull(message = "Id da Carteira não pode ser vazio")
