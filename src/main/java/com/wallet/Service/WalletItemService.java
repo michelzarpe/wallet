@@ -23,4 +23,5 @@ public interface WalletItemService {
 	public Optional<WalletItem> findById(Long wi);
 	
 	public void deleteById(Long id);
+	
 }
