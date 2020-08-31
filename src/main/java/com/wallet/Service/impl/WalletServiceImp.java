@@ -1,6 +1,8 @@
 package com.wallet.Service.impl;
 
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -11,6 +13,7 @@ import org.springframework.stereotype.Service;
 import com.wallet.Service.WalletItemService;
 import com.wallet.entity.WalletItem;
 import com.wallet.repository.WalletItemRepository;
+import com.wallet.util.enums.TypeEnum;
 
 @Service
 public class WalletServiceImp implements WalletItemService{
@@ -34,6 +37,16 @@ public class WalletServiceImp implements WalletItemService{
 
 		
 		return repository.findAllByWalletIdAndDataGreaterThanEqualAndDataLessThanEqual(wallet,start, end, pg);
+	}
+
+	@Override
+	public List<WalletItem> findByWalletAndType(Long wallet, TypeEnum type) {
+		return repository.findByWalletIdAndType(wallet, type);
+	}
+
+	@Override
+	public BigDecimal sumByWalletId(Long wallet) {
+		return repository.sumByWalletId(wallet);
 	}
 	
 
