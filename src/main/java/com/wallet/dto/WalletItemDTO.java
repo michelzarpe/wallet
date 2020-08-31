@@ -10,6 +10,7 @@ import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
 
@@ -23,18 +24,19 @@ public class WalletItemDTO {
 	
 	private Long id;
 	
-	@NotEmpty(message = "Tipo não pode ser vazio")
 	@Length(max = 2, message = "Máximo dois caracteres")
 	@Pattern(regexp="^(ENTRADA|SAIDA)$", message="Para o tipo somente são aceitos ENTRADA e SAIDA")
 	private String type;
 	
-	@NotNull(message = "Id da Carteira não pode ser vazio")
+	@NotNull(message = "Informe uma data")
+	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", locale = "pt-BR", timezone = "Brazil/East")
 	private Date data;
 	
+	@Length(min = 5, message = "Minimo 5 caracteres")
 	@NotEmpty(message = "Descrição não pode ser vazio")
 	private String description;
 	
-	@NotNull(message = "Id da Carteira não pode ser vazio")
+	@NotNull(message = "Valor não pode ser vazio")
 	private BigDecimal value;
 	
 	@NotNull(message = "Id da Carteira não pode ser vazio")

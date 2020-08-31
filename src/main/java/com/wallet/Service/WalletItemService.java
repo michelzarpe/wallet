@@ -3,6 +3,7 @@ package com.wallet.Service;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 
@@ -18,4 +19,8 @@ public interface WalletItemService {
 	public List<WalletItem> findByWalletAndType(Long wallet, TypeEnum type);
 	
 	public BigDecimal sumByWalletId(Long wallet);
+	
+	public Optional<WalletItem> findById(Long wi);
+	
+	public void deleteById(Long id);
 }
