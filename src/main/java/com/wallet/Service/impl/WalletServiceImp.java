@@ -1,36 +1,42 @@
 package com.wallet.Service.impl;
 
+import java.util.Date;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import com.wallet.Service.UserWalletService;
-import com.wallet.dto.UserWalletDTO;
-import com.wallet.entity.UserWallet;
-import com.wallet.repository.UserWalletRepository;
-import com.wallet.repository.UsersRepository;
-import com.wallet.repository.WalletRepository;
+import com.wallet.Service.WalletItemService;
+import com.wallet.entity.WalletItem;
+import com.wallet.repository.WalletItemRepository;
 
 @Service
-public class WalletServiceImp implements UserWalletService{
+public class WalletServiceImp implements WalletItemService{
 
 	@Autowired
-	private UserWalletRepository repository;
+	private WalletItemRepository repository;
 	
-	@Autowired
-	private UsersRepository usersRepository;
-	
-	@Autowired
-	private WalletRepository walletRepository;
-	
+	@Value("${pagination.items_per_page}")
+	private int itemsPerPage;
+
 	@Override
-	public UserWallet save(UserWallet uw) {
-		return repository.save(uw);
+	public WalletItem save(WalletItem wi) {
+		return repository.save(wi);
 	}
 
 	@Override
-	public UserWallet convertDTOToEntity(UserWalletDTO userWalletDTO) {
-		return new UserWallet(userWalletDTO.getId(), usersRepository.findById(userWalletDTO.getUsers()).get(), walletRepository.findById(userWalletDTO.getWallet()).get());
+	public Page<WalletItem> findBetweenDates(Long wallet, Date start, Date end, int page) {
+	
+		@SuppressWarnings("deprecation")
+		PageRequest pg = new PageRequest(page,itemsPerPage);
+
+		
+		return repository.findAllByWalletIdAndDataGreaterThanEqualAndDataLessThanEqual(wallet,start, end, pg);
 	}
+	
+
 	
 
 }

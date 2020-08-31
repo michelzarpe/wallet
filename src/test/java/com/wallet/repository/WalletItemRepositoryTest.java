@@ -137,6 +137,14 @@ public class WalletItemRepositoryTest {
 		assertEquals(response.get(0).getType(),TYPE.SD);
 	}
 	
+	@Test
+	public void testSumByWallet() {
+		Optional<Wallet> w = walletRepository.findById(saveWalletId);
+		repository.save(new WalletItem(null, TypeEnum.SD, DATE, DESCRIPTION, BigDecimal.valueOf(150.80), w.get()));
+		BigDecimal response = repository.sumByWalletId(saveWalletId);
+		assertEquals(response.compareTo(BigDecimal.valueOf(215.8)), 0);
+		
+	}
 	
 	@Test(expected=DataIntegrityViolationException.class)
 	public void testSaveInvalidWalletItem() {
