@@ -22,6 +22,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.wallet.Service.UsersService;
 import com.wallet.dto.UsersDTO;
 import com.wallet.entity.Users;
+import com.wallet.util.enums.RoleEnum;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -70,12 +71,12 @@ public class UserControllerTest {
 	}
 	
 	public Users getMockUser() {
-		Users u = new Users(ID, PASSWORD, NAME, EMAIL);
+		Users u = new Users(ID, PASSWORD, NAME, EMAIL,RoleEnum.ROLE_ADMIN);
 		return u;
 	}
 	
 	public String getJsonPayLoad(Long id, String password, String name, String email) throws JsonProcessingException {
-		UsersDTO dto = new UsersDTO(id, password, name, email);
+		UsersDTO dto = new UsersDTO(id, password, name, email,RoleEnum.ROLE_ADMIN.toString());
 		ObjectMapper mapper = new ObjectMapper();
 		return mapper.writeValueAsString(dto);
 	}

@@ -1,9 +1,10 @@
 package com.wallet.dto;
 
-
 import java.math.BigDecimal;
 import java.util.Date;
 
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
@@ -24,17 +25,18 @@ public class WalletItemDTO {
 	
 	private Long id;
 	
-	@Length(max = 2, message = "Máximo dois caracteres")
 	@Pattern(regexp="^(ENTRADA|SAIDA)$", message="Para o tipo somente são aceitos ENTRADA e SAIDA")
 	private String type;
 	
-	@NotNull(message = "Informe uma data")
-	@JsonFormat(shape=JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy", locale = "pt-BR", timezone = "Brazil/East")
+	@Temporal(TemporalType.DATE)
+	@JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd-MM-yyyy")
 	private Date data;
 	
 	@Length(min = 5, message = "Minimo 5 caracteres")
 	@NotEmpty(message = "Descrição não pode ser vazio")
 	private String description;
+	
+
 	
 	@NotNull(message = "Valor não pode ser vazio")
 	private BigDecimal value;

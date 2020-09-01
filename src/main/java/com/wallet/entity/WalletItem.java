@@ -15,6 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
+import org.hibernate.annotations.Type;
+
 import com.wallet.util.enums.TypeEnum;
 
 import lombok.AllArgsConstructor;
@@ -40,6 +42,7 @@ public class WalletItem implements Serializable{
 	private TypeEnum type;
 	
 	@Column(nullable = false)
+	@Type(type = "date")
 	private Date data;
 	
 	@Column(nullable = false)

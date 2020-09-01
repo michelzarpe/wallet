@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 import javax.validation.Valid;
 
@@ -13,18 +14,22 @@ import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wallet.Service.WalletItemService;
-import com.wallet.Service.WalletService;
 import com.wallet.dto.WalletItemDTO;
+import com.wallet.entity.Wallet;
 import com.wallet.entity.WalletItem;
+import com.wallet.repository.WalletRepository;
 import com.wallet.response.Response;
 import com.wallet.util.enums.TypeEnum;
 
@@ -37,9 +42,8 @@ public class WalletItemController {
 	public WalletItemService service;
 	
 	@Autowired
-	public WalletService walletService;
+	public WalletRepository walletRepository;
 
-	
 	@PostMapping
 	public ResponseEntity<Response<WalletItemDTO>> create(@Valid @RequestBody WalletItemDTO walletItemDTO, BindingResult result){
 		Response<WalletItemDTO> response = new Response<WalletItemDTO>();
@@ -66,7 +70,6 @@ public class WalletItemController {
 		return ResponseEntity.ok().body(response);	
 	}
 	
-	
 	@GetMapping(value = "/type/{wallet}")
 	public ResponseEntity<Response<List<WalletItemDTO>>> findByWalletIdAndType(@PathVariable("wallet") Long wallet,
 			@RequestParam("type") String type){
@@ -87,15 +90,52 @@ public class WalletItemController {
 		return ResponseEntity.ok().body(response);	
 	}
 	
+	@PutMapping
+	public ResponseEntity<Response<WalletItemDTO>> update (@Valid @RequestBody WalletItemDTO dto, BindingResult result){
+		Response<WalletItemDTO> response = new Response<WalletItemDTO>();
+		Optional<WalletItem> wi = service.findById(dto.getId());
+		if(!wi.isPresent()) {
+			result.addError(new ObjectError("WalletItem", "WalletItem não econtrado"));
+		}else {
+			if(wi.get().getWallet().getId().compareTo(dto.getWallet())!=0) {
+				result.addError(new ObjectError("WalletItemChanged", "Você não pode alterar a carteira"));
+			}
+		}
+		
+		if(result.hasErrors()) {
+			result.getAllErrors().forEach(r->response.getErrors().add(r.getDefaultMessage()));
+			return ResponseEntity.badRequest().body(response);
+		}
+		
+		WalletItem saved = service.save(this.convertDTOToEntity(dto));
+		response.setData(this.convertEntityToDTO(saved));
+		return ResponseEntity.ok().body(response);
+		
+	}
 	
-	
+	@DeleteMapping(value = "/{walletItemId}")
+	public ResponseEntity<Response<String>> delete(@PathVariable("walletItemId") Long walletItemId){
+		Response<String> response = new Response<String>();
+		Optional<WalletItem> wi = service.findById(walletItemId);
+		
+		if(!wi.isPresent()) {
+			response.getErrors().add("WalletItem de id "+walletItemId+" não encontrada");
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+		}
+		
+		service.deleteById(walletItemId);
+		response.setData("WalletItem de id "+walletItemId+" apagada com sucesso");
+		return ResponseEntity.ok().body(response);
+	}
+
 	
 	//---------------------------------------------------------------------------------------------------------------------------
 	private WalletItem convertDTOToEntity(WalletItemDTO wid) {
-		return null;
+		Wallet w = walletRepository.findById(wid.getWallet()).get();
+		return new WalletItem(wid.getId(), TypeEnum.getEnum(wid.getType()), wid.getData(), wid.getDescription(), wid.getValue(), w);
 	}
 	
 	private WalletItemDTO convertEntityToDTO(WalletItem wi) {
-		return new WalletItemDTO(wi.getId(), wi.getType().toString(), wi.getData(), wi.getDescription(), wi.getValue(), wi.getWallet().getId());
+		return new WalletItemDTO(wi.getId(), wi.getType().getValue(), wi.getData(), wi.getDescription(), wi.getValue(), wi.getWallet().getId());
 	}
 }

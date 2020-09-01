@@ -3,6 +3,7 @@ package com.wallet.dto;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import org.hibernate.validator.constraints.Length;
 
@@ -25,4 +26,7 @@ public class UsersDTO {
 	private String name;
 	@Email(message = "Email inválido")
 	private String email;
+	@NotNull(message = "Informe uma role de acesso")
+	@Pattern(regexp="^(ROLE_ADMIN|ROLE_USER)$", message = "Para a role de acesso somente são aceitos os valores ROLE_ADMIN ou ROLE_USER")
+	private String role;
 }
