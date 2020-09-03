@@ -1,5 +1,7 @@
 package com.wallet.Service.impl;
 
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,5 +32,10 @@ public class UserWalletServiceImp implements UserWalletService{
 	@Override
 	public UserWallet convertDTOToEntity(UserWalletDTO userWalletDTO) {
 		return new UserWallet(userWalletDTO.getId(), usersRepository.findById(userWalletDTO.getUsers()).get(), walletRepository.findById(userWalletDTO.getWallet()).get());
+	}
+
+	@Override
+	public Optional<UserWallet> findBuUsersIdAndWalletId(Long users, Long wallet) {
+		return repository.findByUsersIdAndWalletId(users, wallet);
 	}
 }

@@ -25,12 +25,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.wallet.Service.UserWalletService;
 import com.wallet.Service.WalletItemService;
 import com.wallet.dto.WalletItemDTO;
+import com.wallet.entity.UserWallet;
 import com.wallet.entity.Wallet;
 import com.wallet.entity.WalletItem;
 import com.wallet.repository.WalletRepository;
 import com.wallet.response.Response;
+import com.wallet.util.Util;
 import com.wallet.util.enums.TypeEnum;
 
 @RestController
@@ -43,6 +46,9 @@ public class WalletItemController {
 	
 	@Autowired
 	public WalletRepository walletRepository;
+	
+	@Autowired
+	public UserWalletService userWalletSerice;
 
 	@PostMapping
 	public ResponseEntity<Response<WalletItemDTO>> create(@Valid @RequestBody WalletItemDTO walletItemDTO, BindingResult result){
@@ -64,6 +70,13 @@ public class WalletItemController {
 			@RequestParam(name = "page", defaultValue = "0") int page){
 		
 		Response<Page<WalletItemDTO>> response = new Response<Page<WalletItemDTO>>();
+		Optional<UserWallet> uw = userWalletSerice.findBuUsersIdAndWalletId(Util.getAuthenticatedUserId(), wallet);
+		
+		if(!uw.isPresent()) {
+			response.getErrors().add("Você não tem acesso a essa carteira");
+			return ResponseEntity.badRequest().body(response);
+		}
+		
 		Page<WalletItem> items = service.findBetweenDates(wallet, startDate, endDate, page);
 		Page<WalletItemDTO> dto = items.map(i-> this.convertEntityToDTO(i));
 		response.setData(dto);

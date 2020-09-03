@@ -23,6 +23,7 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
@@ -30,10 +31,15 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.wallet.Service.UserWalletService;
+import com.wallet.Service.UsersService;
 import com.wallet.Service.WalletItemService;
+import com.wallet.Service.WalletService;
 import com.wallet.dto.WalletItemDTO;
+import com.wallet.entity.Users;
 import com.wallet.entity.Wallet;
 import com.wallet.entity.WalletItem;
+import com.wallet.util.enums.RoleEnum;
 import com.wallet.util.enums.TypeEnum;
 
 @RunWith(SpringRunner.class)
@@ -44,6 +50,15 @@ public class WalletItemControllerTest {
 
 	@MockBean
 	WalletItemService service;
+	
+	@MockBean
+	WalletService walletservice;
+	
+	@MockBean
+	UserWalletService userwalletservice;
+	
+	@MockBean
+	UsersService uservice;
 	
 	@Autowired
 	MockMvc mvc;
@@ -57,14 +72,23 @@ public class WalletItemControllerTest {
 	private static final String URL = "/wallet-item";
 	
 	@Test
+	@WithMockUser
 	public void testHelp() {
 		assertEquals(1, 1);
 	}
 	
 	//@Test
+	//@WithMockUser
 	public void testSalve() throws Exception {
+		Wallet w = new Wallet(ID, "Carteira", BigDecimal.valueOf(65));
+		BDDMockito.given(walletservice.save(Mockito.any(Wallet.class))).willReturn(w);
+		
+		Users u = new Users(1L, "123123", "teste", "teste@te.com",RoleEnum.ROLE_ADMIN);
+		BDDMockito.given(uservice.save(Mockito.any(Users.class))).willReturn(u);
+		
 		BDDMockito.given(service.save(Mockito.any(WalletItem.class))).willReturn(getMockWalletItem());
 		
+		BDDMockito.given(service.findById(Mockito.anyLong())).willReturn(Optional.of(getMockWalletItem()));
 		mvc.perform(MockMvcRequestBuilders.post(URL).content(getJsonPayLoad())
 				.contentType(MediaType.APPLICATION_JSON)
 				.accept(MediaType.APPLICATION_JSON))
