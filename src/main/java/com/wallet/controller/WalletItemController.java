@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.logging.Logger;
 
 import javax.validation.Valid;
 
@@ -49,6 +50,8 @@ public class WalletItemController {
 	
 	@Autowired
 	public UserWalletService userWalletSerice;
+	
+	Logger LOGGER = Logger.getLogger(WalletItemController.class.getName());
 
 	@PostMapping
 	public ResponseEntity<Response<WalletItemDTO>> create(@Valid @RequestBody WalletItemDTO walletItemDTO, BindingResult result){
@@ -86,7 +89,9 @@ public class WalletItemController {
 	@GetMapping(value = "/type/{wallet}")
 	public ResponseEntity<Response<List<WalletItemDTO>>> findByWalletIdAndType(@PathVariable("wallet") Long wallet,
 			@RequestParam("type") String type){
-
+		
+		LOGGER.info("Buscando por carteira "+ wallet +" e tipo "+type);
+		
 		Response<List<WalletItemDTO>> response = new Response<List<WalletItemDTO>>();
 		List<WalletItem> list = service.findByWalletAndType(wallet, TypeEnum.getEnum(type));
 		List<WalletItemDTO> dto = new ArrayList<WalletItemDTO>();
