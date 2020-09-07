@@ -1,4 +1,5 @@
 # wallet
+[![Build Status](https://travis-ci.org/michelzarpe/wallet.svg?branch=master)](https://travis-ci.org/michelzarpe/wallet)
 Esse projeto possui as seguintes características:
 
 -> Projeto criado com Spring Boot e Java 8
