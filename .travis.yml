@@ -4,10 +4,9 @@ jdk:
 - oraclejdk8
 before_install:
 - export TZ=Brazil/East
+- chmod +x mvnw
 deploy:
   provider: heroku
   api_key:
     - secure: $SECURE_KEY
-  app: $APP  
-before_install:
-  - chmod +x mvnw
+  app: $APP
