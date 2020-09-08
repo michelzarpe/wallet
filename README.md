@@ -1,4 +1,4 @@
-# wallet
+# wallet api 
 [![Build Status](https://travis-ci.org/michelzarpe/wallet.svg?branch=master)](https://travis-ci.org/michelzarpe/wallet)
 Esse projeto possui as seguintes características:
 
