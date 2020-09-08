@@ -9,3 +9,5 @@ deploy:
   api_key:
     - secure: $SECURE_KEY
   app: $APP  
+before_install:
+  - chmod +x mvnw
